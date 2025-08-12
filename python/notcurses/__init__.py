@@ -128,5 +128,8 @@ __all__ = (
 
     'ncstrwidth', 'notcurses_version', 'notcurses_version_components',
 
+    'NCBOXASCII', 'NCBOXDOUBLE', 'NCBOXHEAVY', 'NCBOXLIGHT', 'NCBOXOUTER',
+    'NCBOXROUND',
+
     'box', 'rgb',
 )
