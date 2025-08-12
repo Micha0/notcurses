@@ -15,7 +15,7 @@
 # limitations under the License.
 
 from .notcurses import (
-    NcPlane, Notcurses, NcInput,
+    NcPlane, Notcurses, NcInput, NotcursesOptions, NcPlaneOptions,
     ncchannel_alpha, ncchannel_b, ncchannel_default_p,
     ncchannel_g, ncchannel_palindex, ncchannel_palindex_p, ncchannel_r,
     ncchannel_rgb8, ncchannel_rgb_initializer, ncchannel_set,
@@ -40,7 +40,7 @@ from .notcurses import (
 )
 
 __all__ = (
-    'NcPlane', 'Notcurses',
+    'NcPlane', 'Notcurses', 'NcInput', 'NotcursesOptions', 'NcPlaneOptions',
 
     'ncchannel_alpha', 'ncchannel_b', 'ncchannel_default_p', 'ncchannel_g',
     'ncchannel_palindex', 'ncchannel_palindex_p', 'ncchannel_r',

@@ -313,6 +313,14 @@ class NcInput:
     ypx: int
 
 
+class NotcursesOptions:
+    ...
+
+
+class NcPlaneOptions:
+    ...
+
+
 class Notcurses:
     """Notcurses context."""
 
