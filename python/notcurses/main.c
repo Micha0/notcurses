@@ -265,6 +265,63 @@ PyInit_notcurses(void)
     GNU_PY_CHECK_INT(PyModule_AddIntMacro(py_module, NCKEY_MOD_CAPSLOCK));
     GNU_PY_CHECK_INT(PyModule_AddIntMacro(py_module, NCKEY_MOD_NUMLOCK));
 
+    PyObject* opt_obj;
+    opt_obj = PyLong_FromUnsignedLongLong(NCOPTION_INHIBIT_SETLOCALE);
+    if(PyModule_AddObject(py_module, "NCOPTION_INHIBIT_SETLOCALE", opt_obj) < 0){
+        Py_DECREF(opt_obj);
+        return NULL;
+    }
+    opt_obj = PyLong_FromUnsignedLongLong(NCOPTION_NO_CLEAR_BITMAPS);
+    if(PyModule_AddObject(py_module, "NCOPTION_NO_CLEAR_BITMAPS", opt_obj) < 0){
+        Py_DECREF(opt_obj);
+        return NULL;
+    }
+    opt_obj = PyLong_FromUnsignedLongLong(NCOPTION_NO_WINCH_SIGHANDLER);
+    if(PyModule_AddObject(py_module, "NCOPTION_NO_WINCH_SIGHANDLER", opt_obj) < 0){
+        Py_DECREF(opt_obj);
+        return NULL;
+    }
+    opt_obj = PyLong_FromUnsignedLongLong(NCOPTION_NO_QUIT_SIGHANDLERS);
+    if(PyModule_AddObject(py_module, "NCOPTION_NO_QUIT_SIGHANDLERS", opt_obj) < 0){
+        Py_DECREF(opt_obj);
+        return NULL;
+    }
+    opt_obj = PyLong_FromUnsignedLongLong(NCOPTION_PRESERVE_CURSOR);
+    if(PyModule_AddObject(py_module, "NCOPTION_PRESERVE_CURSOR", opt_obj) < 0){
+        Py_DECREF(opt_obj);
+        return NULL;
+    }
+    opt_obj = PyLong_FromUnsignedLongLong(NCOPTION_SUPPRESS_BANNERS);
+    if(PyModule_AddObject(py_module, "NCOPTION_SUPPRESS_BANNERS", opt_obj) < 0){
+        Py_DECREF(opt_obj);
+        return NULL;
+    }
+    opt_obj = PyLong_FromUnsignedLongLong(NCOPTION_NO_ALTERNATE_SCREEN);
+    if(PyModule_AddObject(py_module, "NCOPTION_NO_ALTERNATE_SCREEN", opt_obj) < 0){
+        Py_DECREF(opt_obj);
+        return NULL;
+    }
+    opt_obj = PyLong_FromUnsignedLongLong(NCOPTION_NO_FONT_CHANGES);
+    if(PyModule_AddObject(py_module, "NCOPTION_NO_FONT_CHANGES", opt_obj) < 0){
+        Py_DECREF(opt_obj);
+        return NULL;
+    }
+    opt_obj = PyLong_FromUnsignedLongLong(NCOPTION_DRAIN_INPUT);
+    if(PyModule_AddObject(py_module, "NCOPTION_DRAIN_INPUT", opt_obj) < 0){
+        Py_DECREF(opt_obj);
+        return NULL;
+    }
+    opt_obj = PyLong_FromUnsignedLongLong(NCOPTION_SCROLLING);
+    if(PyModule_AddObject(py_module, "NCOPTION_SCROLLING", opt_obj) < 0){
+        Py_DECREF(opt_obj);
+        return NULL;
+    }
+    opt_obj = PyLong_FromUnsignedLongLong(NCOPTION_CLI_MODE);
+    if(PyModule_AddObject(py_module, "NCOPTION_CLI_MODE", opt_obj) < 0){
+        Py_DECREF(opt_obj);
+        return NULL;
+    }
+
     PyObject *traceback_module = GNU_PY_CHECK(PyImport_ImportModule("traceback"));
     traceback_format_exception = GNU_PY_CHECK(PyObject_GetAttrString(traceback_module, "format_exception"));
     Py_DECREF(traceback_module);
