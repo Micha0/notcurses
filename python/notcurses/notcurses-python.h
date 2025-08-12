@@ -33,10 +33,26 @@ extern PyTypeObject Notcurses_Type;
 typedef struct
 {
     PyObject_HEAD;
+    struct notcurses_options notcurses_options;
+} NotcursesOptionsObject;
+
+extern PyTypeObject NotcursesOptions_Type;
+
+typedef struct
+{
+    PyObject_HEAD;
     struct ncplane *ncplane_ptr;
 } NcPlaneObject;
 
 extern PyTypeObject NcPlane_Type;
+
+typedef struct
+{
+    PyObject_HEAD;
+    struct ncplane_options ncplane_options;
+} NcPlaneOptionsObject;
+
+extern PyTypeObject NcPlaneOptions_Type;
 
 typedef struct
 {

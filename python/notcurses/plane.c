@@ -17,6 +17,16 @@ limitations under the License.
 
 #include "notcurses-python.h"
 
+PyTypeObject NcPlaneOptions_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+        .tp_name = "notcurses.NcPlaneOptions",
+    .tp_doc = "NcPlane Options",
+    .tp_basicsize = sizeof(NcPlaneOptionsObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = PyType_GenericNew,
+};
+
 static PyObject *
 NcPlane_new(PyTypeObject *Py_UNUSED(subtype), PyObject *Py_UNUSED(args), PyObject *Py_UNUSED(kwds))
 {
@@ -59,7 +69,7 @@ Ncplane_create(NcPlaneObject *self, PyObject *args, PyObject *kwds)
         .resizecb = ncplane_resize_maximize,
     };
 
-    PyObject *new_object CLEANUP_PY_OBJ = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
+    PyObject *new_object = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
     NcPlaneObject *new_plane = (NcPlaneObject *)new_object;
     new_plane->ncplane_ptr = CHECK_NOTCURSES_PTR(ncplane_create(self->ncplane_ptr, &options));
 
@@ -80,7 +90,7 @@ NcPlane_destroy(NcPlaneObject *self, PyObject *Py_UNUSED(args))
 static PyObject *
 NcPlane_notcurses(NcPlaneObject *self, PyObject *Py_UNUSED(args))
 {
-    PyObject *new_object CLEANUP_PY_OBJ = Notcurses_Type.tp_alloc((PyTypeObject *)&Notcurses_Type, 0);
+    PyObject *new_object = Notcurses_Type.tp_alloc((PyTypeObject *)&Notcurses_Type, 0);
     NotcursesObject *new_notcurses = (NotcursesObject *)new_object;
     new_notcurses->notcurses_ptr = CHECK_NOTCURSES_PTR(ncplane_notcurses(self->ncplane_ptr));
 
@@ -152,7 +162,7 @@ NcPlane_reparent_family(NcPlaneObject *self, PyObject *args)
 static PyObject *
 NcPlane_dup(NcPlaneObject *self, PyObject *Py_UNUSED(args))
 {
-    PyObject *new_object CLEANUP_PY_OBJ = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
+    PyObject *new_object = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
     NcPlaneObject *new_plane = (NcPlaneObject *)new_object;
     new_plane->ncplane_ptr = CHECK_NOTCURSES_PTR(ncplane_dup(self->ncplane_ptr, NULL));
 
@@ -321,7 +331,7 @@ NcPlane_parent(NcPlaneObject *self, PyObject *Py_UNUSED(args))
     }
     else
     {
-        PyObject *new_object CLEANUP_PY_OBJ = NcPlane_Type.tp_alloc((PyTypeObject *)&Notcurses_Type, 0);
+        PyObject *new_object = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
         NcPlaneObject *new_plane = (NcPlaneObject *)new_object;
         new_plane->ncplane_ptr = possible_parent;
 
@@ -435,7 +445,7 @@ NcPlane_at_cursor(NcPlaneObject *self, PyObject *Py_UNUSED(args))
     uint64_t channels = 0;
     char *egc = CHECK_NOTCURSES_PTR(ncplane_at_cursor(self->ncplane_ptr, &style_mask, &channels));
 
-    PyObject *egc_str CLEANUP_PY_OBJ = GNU_PY_CHECK(PyUnicode_FromString(egc));
+    PyObject *egc_str = GNU_PY_CHECK(PyUnicode_FromString(egc));
     free(egc);
 
     return Py_BuildValue("OHK", egc_str, (unsigned short)style_mask, (unsigned long long)channels);
@@ -460,7 +470,7 @@ NcPlane_at_yx(NcPlaneObject *self, PyObject *args)
 
     char *egc = CHECK_NOTCURSES_PTR(ncplane_at_yx(self->ncplane_ptr, y, x, &style_mask, &channels));
 
-    PyObject *egc_str CLEANUP_PY_OBJ = GNU_PY_CHECK(PyUnicode_FromString(egc));
+    PyObject *egc_str = GNU_PY_CHECK(PyUnicode_FromString(egc));
     free(egc);
 
     return Py_BuildValue("OHK", egc_str, (unsigned short)style_mask, (unsigned long long)channels);
@@ -488,10 +498,10 @@ NcPlane_contents(NcPlaneObject *self, PyObject *args, PyObject *kwds)
 
     char *egcs = CHECK_NOTCURSES_PTR(ncplane_contents(self->ncplane_ptr, beg_y, beg_x, len_y, len_x));
 
-    PyObject *egcs_str CLEANUP_PY_OBJ = GNU_PY_CHECK(PyUnicode_FromString(egcs));
+    PyObject *egcs_str = GNU_PY_CHECK(PyUnicode_FromString(egcs));
     free(egcs);
 
-    return Py_BuildValue("s", egcs_str);
+    return egcs_str;
 }
 
 static PyObject *
@@ -1616,7 +1626,7 @@ static void cleanup_char_buffer(char **buffer_ptr)
 static PyObject *
 NcPlane_pile_render_to_buffer(NcPlaneObject *self, PyObject *Py_UNUSED(args))
 {
-    char *buffer __attribute__((cleanup(cleanup_char_buffer))) = NULL;
+    char *buffer = NULL;
     size_t buffer_len = 0;
 
     CHECK_NOTCURSES(ncpile_render_to_buffer(self->ncplane_ptr, &buffer, &buffer_len));
@@ -1638,14 +1648,16 @@ NcPlane_pile_render_to_file(NcPlaneObject *self, PyObject *args)
     int fd = INT_MAX;
     GNU_PY_CHECK_BOOL(PyArg_ParseTuple(args, "i", &fd));
 
-    FILE *new_render_file __attribute__((cleanup(cleanup_file))) = fdopen(fd, "w");
+    FILE *new_render_file = fdopen(fd, "w");
 
     if (NULL == new_render_file)
     {
         return PyErr_SetFromErrno(PyExc_RuntimeError);
     }
 
-    CHECK_NOTCURSES(ncpile_render_to_file(self->ncplane_ptr, new_render_file));
+    int ret = ncpile_render_to_file(self->ncplane_ptr, new_render_file);
+    fclose(new_render_file);
+    CHECK_NOTCURSES(ret);
 
     Py_RETURN_NONE;
 }

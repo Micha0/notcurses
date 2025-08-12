@@ -65,7 +65,7 @@ PyTypeObject *NcInput_Type;
 PyMODINIT_FUNC
 PyInit_notcurses(void)
 {
-    PyObject *py_module CLEANUP_PY_OBJ = NULL;
+    PyObject *py_module = NULL;
     py_module = PyModule_Create(&NotcursesMiscModule);
 
     GNU_PY_CHECK_INT(PyModule_AddFunctions(py_module, ChannelsFunctions));
@@ -73,11 +73,15 @@ PyInit_notcurses(void)
 
     // Type ready?
     GNU_PY_TYPE_READY(&Notcurses_Type);
+    GNU_PY_TYPE_READY(&NotcursesOptions_Type);
     GNU_PY_TYPE_READY(&NcPlane_Type);
+    GNU_PY_TYPE_READY(&NcPlaneOptions_Type);
 
     // Add objects
     GNU_PY_MODULE_ADD_OBJECT(py_module, (PyObject *)&Notcurses_Type, "Notcurses");
+    GNU_PY_MODULE_ADD_OBJECT(py_module, (PyObject *)&NotcursesOptions_Type, "NotcursesOptions");
     GNU_PY_MODULE_ADD_OBJECT(py_module, (PyObject *)&NcPlane_Type, "NcPlane");
+    GNU_PY_MODULE_ADD_OBJECT(py_module, (PyObject *)&NcPlaneOptions_Type, "NcPlaneOptions");
 
     NcInput_Type = PyStructSequence_NewType(&NcInput_desc);
     if (NcInput_Type == NULL)
@@ -109,8 +113,9 @@ PyInit_notcurses(void)
     // extract these bits to get the background alpha mask
     GNU_PY_CHECK_INT(PyModule_AddIntMacro(py_module, NC_BG_ALPHA_MASK));
 
-    PyObject *traceback_module CLEANUP_PY_OBJ = GNU_PY_CHECK(PyImport_ImportModule("traceback"));
+    PyObject *traceback_module = GNU_PY_CHECK(PyImport_ImportModule("traceback"));
     traceback_format_exception = GNU_PY_CHECK(PyObject_GetAttrString(traceback_module, "format_exception"));
+    Py_DECREF(traceback_module);
     new_line_unicode = GNU_PY_CHECK(PyUnicode_FromString("\n"));
 
     Py_INCREF(py_module);

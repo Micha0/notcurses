@@ -34,12 +34,23 @@ Notcurses_uncaught_audit(const char *event, PyObject *args, void *Py_UNUSED(user
     PyObject *uncaught_value = GNU_PY_CHECK_RET_NEG1(PyTuple_GetItem(args, 2));
     PyObject *uncaught_traceback = GNU_PY_CHECK_RET_NEG1(PyTuple_GetItem(args, 3));
 
-    PyObject *uncaught_expection_format_list CLEANUP_PY_OBJ = GNU_PY_CHECK_RET_NEG1(PyObject_CallFunctionObjArgs(traceback_format_exception, uncaught_type, uncaught_value, uncaught_traceback, NULL));
+    PyObject *uncaught_expection_format_list = GNU_PY_CHECK_RET_NEG1(PyObject_CallFunctionObjArgs(traceback_format_exception, uncaught_type, uncaught_value, uncaught_traceback, NULL));
 
     uncaught_exception_unicode = GNU_PY_CHECK_RET_NEG1(PyUnicode_Join(new_line_unicode, uncaught_expection_format_list));
+    Py_DECREF(uncaught_expection_format_list);
 
     return 0;
 }
+
+PyTypeObject NotcursesOptions_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+        .tp_name = "notcurses.NotcursesOptions",
+    .tp_doc = "Notcurses Options",
+    .tp_basicsize = sizeof(NotcursesOptionsObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = PyType_GenericNew,
+};
 
 static void
 Notcurses_dealloc(NotcursesObject *self)
@@ -161,7 +172,7 @@ Notcurses_render(NotcursesObject *self, PyObject *Py_UNUSED(args))
 static PyObject *
 Notcurses_top(NotcursesObject *self, PyObject *Py_UNUSED(args))
 {
-    PyObject *new_object CLEANUP_PY_OBJ = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
+    PyObject *new_object = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
     NcPlaneObject *new_plane = (NcPlaneObject *)new_object;
     new_plane->ncplane_ptr = CHECK_NOTCURSES_PTR(notcurses_top(self->notcurses_ptr));
 
@@ -172,7 +183,7 @@ Notcurses_top(NotcursesObject *self, PyObject *Py_UNUSED(args))
 static PyObject *
 Notcurses_bottom(NotcursesObject *self, PyObject *Py_UNUSED(args))
 {
-    PyObject *new_object CLEANUP_PY_OBJ = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
+    PyObject *new_object = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
     NcPlaneObject *new_plane = (NcPlaneObject *)new_object;
     new_plane->ncplane_ptr = CHECK_NOTCURSES_PTR(notcurses_bottom(self->notcurses_ptr));
 
@@ -312,7 +323,7 @@ Notcurses_refresh(NotcursesObject *self, PyObject *Py_UNUSED(args))
 static PyObject *
 Notcurses_stdplane(NotcursesObject *self, PyObject *Py_UNUSED(args))
 {
-    PyObject *new_object CLEANUP_PY_OBJ = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
+    PyObject *new_object = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
     NcPlaneObject *new_plane = (NcPlaneObject *)new_object;
     new_plane->ncplane_ptr = CHECK_NOTCURSES_PTR(notcurses_stdplane(self->notcurses_ptr));
 
@@ -324,7 +335,7 @@ static PyObject *
 Notcurses_stddim_yx(NotcursesObject *self, PyObject *Py_UNUSED(args))
 {
     unsigned y = 0, x = 0;
-    PyObject *new_object CLEANUP_PY_OBJ = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
+    PyObject *new_object = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
     NcPlaneObject *new_plane = (NcPlaneObject *)new_object;
     new_plane->ncplane_ptr = CHECK_NOTCURSES_PTR(notcurses_stddim_yx(self->notcurses_ptr, &y, &x));
 
@@ -382,7 +393,7 @@ Notcurses_pile_create(NotcursesObject *self, PyObject *args, PyObject *kwds)
         .margin_r = margin_r,
     };
 
-    PyObject *new_object CLEANUP_PY_OBJ = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
+    PyObject *new_object = NcPlane_Type.tp_alloc((PyTypeObject *)&NcPlane_Type, 0);
     NcPlaneObject *new_plane = (NcPlaneObject *)new_object;
     new_plane->ncplane_ptr = CHECK_NOTCURSES_PTR(ncpile_create(self->notcurses_ptr, &options));
 
